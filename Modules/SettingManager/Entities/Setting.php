@@ -40,7 +40,7 @@ class Setting extends Model
         });
     }
 
-    public function sluggable() {
+    public function sluggable(): array {
 		return [
             'dbfield' => 'slug',
             'source' => 'title',
