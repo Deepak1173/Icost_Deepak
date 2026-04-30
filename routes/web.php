@@ -12,7 +12,7 @@
  */
 
 
-Route::get('/', function() {
+Route::get('/', function () {
     return redirect()->route('login');
 });
 
@@ -23,27 +23,28 @@ Auth::routes();
 Route::get('/page/{slug}', 'SiteController@page');
 Route::get('/{slug}', 'SiteController@page')->where('slug', 'about-us|support');
 
+Route::middleware('auth')->group(function () {
 
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/', 'HomeController@index')->name('dashboard');
+        Route::get('/statics', 'HomeController@projectStatics')->name('dashboard.statics');
+        Route::get('/gantt', 'HomeController@projectGantt')->name('dashboard.gantt');
+        Route::get('/suppliervsestimate', 'HomeController@suppliervsestimate')->name('dashboard.suppliervsestimate');
+        Route::get('/projecttasktime', 'HomeController@projecttasktime')->name('dashboard.projecttasktime');
+        Route::get('/getuserhourthisweek', 'HomeController@getuserhourthisweek')->name('dashboard.getuserhourthisweek');
+        Route::get('/purchase-report', 'HomeController@purchaseReports')->name('dashboard.purchase.report.list');
+    });
 
-Route::group(['middleware' => ['auth']], function() {
-
-    Route::get('/dashboard', 'HomeController@index')->name('dashboard');
-    Route::get('/dashboard/statics', 'HomeController@projectStatics')->name('dashboard.statics');
-    Route::get('/dashboard/gantt', 'HomeController@projectGantt')->name('dashboard.gantt');
-    Route::get('/dashboard/suppliervsestimate', 'HomeController@suppliervsestimate')->name('dashboard.suppliervsestimate');
-    Route::get('/dashboard/projecttasktime', 'HomeController@projecttasktime')->name('dashboard.projecttasktime');
-    Route::get('/dashboard/getuserhourthisweek', 'HomeController@getuserhourthisweek')->name('dashboard.getuserhourthisweek');
-    Route::get('/dashboard/purchase-report', 'HomeController@purchaseReports')->name('dashboard.purchase.report.list');
     //Route::get('/dashboard/staff-report', 'HomeController@staffdataReports')->name('dashboard.staff.timesheet.report.info');
     
     //Route::get('/profile/{id}', 'HomeController@profile')->name('profile');
     //Route::post('/profile/update/{id}', 'HomeController@profileUpdate')->name('profile.update');
     Route::post('/change-flag/{table}/{id}', 'HomeController@changeFlag')->name('changeflag');
-    Route::post('/change-action/{table}/{id}','HomeController@changeAction')->name('changeaction');
+    Route::post('/change-action/{table}/{id}', 'HomeController@changeAction')->name('changeaction');
 
 
 
-        Route::prefix('emailtemplates')->group(function() {
+    Route::prefix('emailtemplates')->group(function () {
         Route::get('/', 'EmailTemplatesController@index')->name('emailtemplates');
         Route::get('/ajax/list', 'EmailTemplatesController@ajaxList')->name('emailtemplates.ajax.list');
         Route::get('/view/{id}', 'EmailTemplatesController@show');

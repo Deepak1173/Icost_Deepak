@@ -3,33 +3,7 @@
                   
                     
                     <a href="{{ route('dashboard')}}"  class="brand-link">
-        @if(!auth()->user()->isRole('Super Admin'))
-            @if(auth()->user()->isRole('Admin'))
-                @if(\Storage::disk('public')->has(auth()->user()->company_logo))
-                    <img src="{{ asset('storage/'.auth()->user()->company_logo) }}" alt="" class="brand-image img-circle elevation-3"
-                    style="opacity: .8;height:40px;border-radius: 50%">
-                @else
-                    <img src="{{ asset('images/no-img-100x92.jpg') }}" alt="" class="brand-image img-circle elevation-3"
-                    style="opacity: .8;height:40px;border-radius: 50%">
-                @endif
-            @else
-                @if(\Storage::disk('public')->has(auth()->user()->company->company_logo))
-                    <img src="{{asset('storage/'.auth()->user()->company_logo) }}" alt="" class="brand-image img-circle elevation-3"
-                    style="opacity: .8;height:40px;border-radius: 50%">
-                @else
-                    <img src="{{ asset('images/no-img-100x92.jpg') }}" alt="" class="brand-image img-circle elevation-3"
-                    style="opacity: .8;height:40px;border-radius: 50%">
-                @endif
-            @endif
-        @else
-            @if(\Storage::disk('public')->has('settings/'.config('get.MAIN_LOGO')))
-                <img src="{{ asset('storage/settings/' . config('get.MAIN_LOGO')) }}" alt="" class="brand-image img-circle elevation-3"
-                style="opacity: .8;height:40px;border-radius: 50%">
-            @else
-                <img src="{{ asset('images/no-img-100x92.jpg') }}" alt="" class="brand-image img-circle elevation-3"
-                style="opacity: .8;height:40px;border-radius: 50%">
-            @endif
-        @endif
+        @include('components.brand-logo')
         <span class="brand-text font-weight-light">{{ config('get.SYSTEM_APPLICATION_NAME') }}</span>
     </a>
                     <div class="header__pane ml-auto">

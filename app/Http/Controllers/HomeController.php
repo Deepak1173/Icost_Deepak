@@ -61,23 +61,9 @@ class HomeController extends Controller {
         $query2 = User::query();
         $query3 = User::query();
         
-        if(!auth()->user()->isRole('Super Admin')){
-            if(auth()->user()->isRole('Admin')){
-                $query1->where('company_id', auth()->id());
-                $query2->where('company_id', auth()->id());
-                $query3->where('company_id', auth()->id());
-            }else{
-                $query1->whereHas('company', function($q){
-                    $q->where('id', auth()->user()->company_id);
-                });
-                $query2->whereHas('company', function($q){
-                    $q->where('id', auth()->user()->company_id);
-                });
-                $query3->whereHas('company', function($q){
-                    $q->where('id', auth()->user()->company_id);
-                });
-            }
-        }
+        $this->scopeUserQueryForCurrentUser($query1);
+        $this->scopeUserQueryForCurrentUser($query2);
+        $this->scopeUserQueryForCurrentUser($query3);
   
         $admin_count = $query1->whereHas('roles', function($query) {
                             $query->where('slug', '=', 'admin');
@@ -91,14 +77,7 @@ class HomeController extends Controller {
                             $query->whereNotIn('slug', ['super_admin', 'admin', 'supplier']);
                         })->count();
                         
-        $query = Project::whereStatus(1);
-        if(!auth()->user()->isRole('Super Admin')){
-            if(auth()->user()->isRole('Admin')){
-                $query->where('company_id', auth()->id());
-            }else{
-                $query->where('company_id', auth()->user()->company_id);
-            }
-        }
+        $query = $this->scopeProjectQueryForCurrentUser(Project::whereStatus(1));
         $projects = $query->get(['id', 'project_title', 'version']);
         $projects = $projects->pluck('display_project_title', 'id');
         
@@ -216,14 +195,7 @@ class HomeController extends Controller {
         
         
         
-        $query = Project::whereStatus(1);
-        if(!auth()->user()->isRole('Super Admin')){
-            if(auth()->user()->isRole('Admin')){
-                $query->where('company_id', auth()->id());
-            }else{
-                $query->where('company_id', auth()->user()->company_id);
-            }
-        }
+        $query = $this->scopeProjectQueryForCurrentUser(Project::whereStatus(1));
         $allProjects = $query->get(['id', 'project_title', 'version']);
         
          $all_proj = array();
@@ -313,15 +285,8 @@ class HomeController extends Controller {
     public function projects(){
       
         try{
-                $query = Project::query();
+                $query = $this->scopeProjectQueryForCurrentUser(Project::query());
                 //$query = \DB::table('projects');
-                if(!auth()->user()->isRole('Super Admin')){
-                    if(auth()->user()->isRole('Admin')){
-                        $query->where('company_id', auth()->id());
-                    }else{
-                        $query->where('company_id', auth()->user()->company_id);
-                    }
-                }
                 /*$query->when(($request->has('project_id') && $request->query('project_id')), function($q) use($request){
                     $q->where('id', $request->query('project_id'));
                 });*/
@@ -329,6 +294,34 @@ class HomeController extends Controller {
                 //$view = view('reportmanager::project_report_list', compact('projects'))->render();
             }catch(\Exception $e){}
         return $projects;
+    }
+
+    private function scopeUserQueryForCurrentUser($query)
+    {
+        if (auth()->user()->isRole('Super Admin')) {
+            return $query;
+        }
+
+        if (auth()->user()->isRole('Admin')) {
+            return $query->where('company_id', auth()->id());
+        }
+
+        return $query->whereHas('company', function ($q) {
+            $q->where('id', auth()->user()->company_id);
+        });
+    }
+
+    private function scopeProjectQueryForCurrentUser($query, $companyColumn = 'company_id')
+    {
+        if (auth()->user()->isRole('Super Admin')) {
+            return $query;
+        }
+
+        $companyId = auth()->user()->isRole('Admin')
+            ? auth()->id()
+            : auth()->user()->company_id;
+
+        return $query->where($companyColumn, $companyId);
     }
     
      public function purchaseReports(Request $request){

@@ -55,24 +55,12 @@
   <!-- REQUIRED SCRIPTS -->
   @include('elements.scripts')
   @stack('scripts')
+  @include('components.notification-poller')
   <script type="text/javascript">
       $(document).ready(function() {
-          setTimeout(handleNotification, 10000);
           $('.select2-input').select2();
           bsCustomFileInput.init();
       });
-      function handleNotification(){
-          $.ajax({
-              url: "{{ route('conversations.notifications') }}",
-              type: 'get',
-              success: function(data){
-                $(document).find('.notifications-wrapper').html(data.html);
-              },
-              complete:function(data){
-                  setTimeout(handleNotification, 10000);
-              }
-          });
-      }
   </script>
 
 </body>

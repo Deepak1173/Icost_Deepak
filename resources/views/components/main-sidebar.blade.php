@@ -5,33 +5,7 @@ $currentUrl = \Illuminate\Support\Facades\Request::segment(2);
 
  <div class="app-sidebar sidebar-shadow bg-mean-fruit sidebar-text-dark" style="overflow: auto"> 
                   <div class="app-header__logo">
-                   @if(!auth()->user()->isRole('Super Admin'))
-            @if(auth()->user()->isRole('Admin'))
-                @if(\Storage::disk('public')->has(auth()->user()->company_logo))
-                    <img src="{{ asset('storage/'.auth()->user()->company_logo) }}" alt="" class="brand-image img-circle elevation-3"
-                    style="opacity: .8;height:40px;border-radius: 50%">
-                @else
-                    <img src="{{ asset('images/no-img-100x92.jpg') }}" alt="" class="brand-image img-circle elevation-3"
-                    style="opacity: .8;height:40px;border-radius: 50%">
-                @endif
-            @else
-                @if(\Storage::disk('public')->has(auth()->user()->company->company_logo))
-                    <img src="{{ asset('storage/'.auth()->user()->company->company_logo) }}" alt="" class="brand-image img-circle elevation-3"
-                    style="opacity: .8;height:40px;border-radius: 50%">
-                @else
-                    <img src="{{ asset('images/no-img-100x92.jpg') }}" alt="" class="brand-image img-circle elevation-3"
-                    style="opacity: .8;height:40px;border-radius: 50%">
-                @endif
-            @endif
-        @else
-            @if(\Storage::disk('public')->has('settings/'.config('get.MAIN_LOGO')))
-                <img src="{{ asset('storage/settings/' . config('get.MAIN_LOGO')) }}" alt="" class="brand-image img-circle elevation-3"
-                style="opacity: .8;height:40px;border-radius: 50%">
-            @else
-                <img src="{{ asset('images/no-img-100x92.jpg') }}" alt="" class="brand-image img-circle elevation-3"
-                style="opacity: .8;height:40px;border-radius: 50%">
-            @endif
-        @endif
+                   @include('components.brand-logo')
                         <div class="header__pane ml-auto">
                             <div>
                                 <button type="button" class="hamburger close-sidebar-btn hamburger--elastic" data-class="closed-sidebar">
@@ -88,7 +62,7 @@ $currentUrl = \Illuminate\Support\Facades\Request::segment(2);
                                <li>
                                     <a href="#">
                                         <i class="metismenu-icon pe-7s-monitor"></i>
-                                        Suppliers Management
+                                        Supplier Management
                                         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                     </a>
                                     <ul>
@@ -121,14 +95,14 @@ $currentUrl = \Illuminate\Support\Facades\Request::segment(2);
                                <li>
                                     <a href="#">
                                         <i class="metismenu-icon pe-7s-users"></i>
-                                         User Manager
+                                         User Management
                                         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                     </a>
                                     <ul>
                                         <li class="mm-{{ request()->is('users*') ? 'active' : '' }}">
                                           <a href="{{route('users.index')}}">
                                           <i class="metismenu-icon pe-7s-users"></i>
-                                         User Manager
+                                         User Management
                                         </a>
                                       </li>
                                                                 
@@ -139,7 +113,7 @@ $currentUrl = \Illuminate\Support\Facades\Request::segment(2);
                                 <li class="mm-{{(Request::segment(1)=='permissions')?'active':''}}">
                                     <a href="{{ route('permissions.index') }}">
                                         <i class="metismenu-icon pe-7s-target"></i>
-                                       Default Permission                                       
+                                       Default Permissions
                                     </a>
                                     
                                 </li>
@@ -166,7 +140,7 @@ $currentUrl = \Illuminate\Support\Facades\Request::segment(2);
                                 <li class="mm-{{ in_array(\Request::route()->getName(), ['helpdesk'])?'active':''}}">
                                     <a href="{{ route('helpdesk') }}">
                                         <i class="metismenu-icon pe-7s-phone"></i>
-                                       ICost Help Desk
+                                       Help Desk
                                        
                                     </a>
                                     
@@ -198,7 +172,7 @@ $currentUrl = \Illuminate\Support\Facades\Request::segment(2);
                                 <li class="mm-{{ request()->is('companies*') ? 'active' : '' }}">
                                     <a href="{{ route('companies.index') }}">
                                         <i class="metismenu-icon pe-7s-portfolio"></i>
-                                        Company Manager
+                                        Company Management
                                        
                                     </a>
                                     
@@ -227,7 +201,7 @@ $currentUrl = \Illuminate\Support\Facades\Request::segment(2);
                                <li class="mm-{{ (request()->is('carbon/projects*')) ? 'active' : '' }}">
 												<a href="{{ route('carbon.projects') }}">
 													<i class="metismenu-icon pe-7s-print"></i>
-												    Estimate
+												    Estimates
 												   
 												</a>
 										</li>
@@ -293,7 +267,7 @@ $currentUrl = \Illuminate\Support\Facades\Request::segment(2);
                                  <li>
                                     <a href="#">
                                         <i class="metismenu-icon pe-7s-date"></i>
-                                       Timesheet Manager
+                                       Timesheet Management
                                         <i class="metismenu-state-icon pe-7s-angle-down caret-left"></i>
                                     </a>
                                     <ul>
@@ -320,7 +294,7 @@ $currentUrl = \Illuminate\Support\Facades\Request::segment(2);
                                          <li>
                                             <a href="{{ route('timesheets.labour.weekly') }}" class="mm-{{ (request()->is('timesheets/labour-weekly*')) ? 'active' : '' }}">
                                                 <i class="metismenu-icon"></i>
-                                                Weekly Site Ops Timesheet
+                                                Weekly Site Operative Timesheet
                                             </a>
                                         </li>
                                     </ul>
